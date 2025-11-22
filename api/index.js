@@ -146,4 +146,4 @@ server.get("/products/:category", (req, res) => {
         });
 })
 
-module.exports = server;
+server.listen(3000, () => console.log("servidor rodando!"))
