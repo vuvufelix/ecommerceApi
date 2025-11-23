@@ -4,6 +4,7 @@ dotenv.config();
 const express = require("express");
 const cors = require("cors");
 const { Sequelize } = require("sequelize");
+const { Op } = require("sequelize");
 const Stripe = require("stripe");
 
 const server = express();
@@ -126,10 +127,16 @@ server.get("/product/:id", (req, res) => {
         });
 })
 
-server.get("/product/search/:name", (req, res) => {
-        const { name } = req.params;
+server.get("/product/search/:nome", (req, res) => {
+        const { nome } = req.params;
 
-        Products.findAll({where: {"name": name}}).then((products) => {
+        Products.findAll({
+            where: {
+                name: {
+                    [Op.like]: `%${nome}%`
+                } 
+            }
+        }).then((products) => {
             res.json(products);
         }).catch((error) => {
             res.json({message: "Houve um erro ao pesquisar produto"});
