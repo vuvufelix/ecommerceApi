@@ -72,84 +72,84 @@ server.get("/", (req, res) => {
 
 server.post("/create-checkout-session", async (req, res) => {
 
-        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-        try {
-            const { AllProducts } = req.body;
-            
-            //const products = JSON.parse(AllProducts)
+    try {
+        const { AllProducts } = req.body;
+        
+        //const products = JSON.parse(AllProducts)
 
-            // Lista os produtos adicionados ao carrinho
-            const lineItems = AllProducts.map((product) => ({
-                price_data: {
-                    currency: "usd",
-                    product_data: {
-                        name: product.name,
-                    },
-                    unit_amount: product.price * 100,
+        // Lista os produtos adicionados ao carrinho
+        const lineItems = AllProducts.map((product) => ({
+            price_data: {
+                currency: "usd",
+                product_data: {
+                    name: product.name,
                 },
-                quantity: product.quantity || 1
-            }));
+                unit_amount: product.price * 100,
+            },
+            quantity: product.quantity || 1
+        }));
 
-            // Cria uma nova sessão de pagamento!
-            const session = await stripe.checkout.sessions.create({
-                payment_method_types: ["card"],
-                mode: "payment",
-                line_items: lineItems,
-                success_url: https://nenet.vercel.app/success
-                cancel_url: https://nenet.vercel.app/cancel
-            });
+        // Cria uma nova sessão de pagamento!
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            mode: "payment",
+            line_items: lineItems,
+            success_url: `${process.env.FRONTEND_URL}/success`,
+            cancel_url: `${process.env.FRONTEND_URL}/cancel`
+        });
 
-            res.json({ url: session.url })
-        } catch {
-            res.status(500).json({message: "Erro ao criar pagamento"});
-        }
+        res.json({ url: session.url })
+    } catch {
+        res.status(500).json({message: "Erro ao criar pagamento"});
+    }
 })
 
 server.get("/products", (req, res) => {
     // Buscar todos os Produtos
-        Products.findAll().then((product) => {
-            res.json(product);
-        }).catch((error) => {
-            res.json({message: "Erro ao Listar os produtos " + error});
-        });
+    Products.findAll().then((product) => {
+        res.json(product);
+    }).catch((error) => {
+        res.json({message: "Erro ao Listar os produtos " + error});
+    });
 })
 
 server.get("/product/:id", (req, res) => {
 
-        const { id } = req.params;
+    const { id } = req.params;
 
-        Products.findOne({where: {"id": id}}).then((product) => {
-            res.json(product);
-        }).catch((error) => {
-            res.json({message: "Erro ao buscar produto " + error});
-        });
+    Products.findOne({where: {"id": id}}).then((product) => {
+        res.json(product);
+    }).catch((error) => {
+        res.json({message: "Erro ao buscar produto " + error});
+    });
 })
 
 server.get("/product/search/:nome", (req, res) => {
-        const { nome } = req.params;
+    const { nome } = req.params;
 
-        Products.findAll({
-            where: {
-                name: {
-                    [Op.like]: `%${nome}%`
-                } 
-            }
-        }).then((products) => {
-            res.json(products);
-        }).catch((error) => {
-            res.json({message: "Houve um erro ao pesquisar produto"});
-        });
+    Products.findAll({
+        where: {
+            name: {
+                [Op.like]: `%${nome}%`
+            } 
+        }
+    }).then((products) => {
+        res.json(products);
+    }).catch((error) => {
+        res.json({message: "Houve um erro ao pesquisar produto"});
+    });
 })
 
 server.get("/products/:category", (req, res) => {
-        const { category } = req.params;
+    const { category } = req.params;
 
-        Products.findAll({where: {"category": category}}).then((product) => {
-            res.json(product);
-        }).catch((error) => {
-            res.json("Erro ao Listar categoria " + error);
-        });
+    Products.findAll({where: {"category": category}}).then((product) => {
+        res.json(product);
+    }).catch((error) => {
+        res.json("Erro ao Listar categoria " + error);
+    });
 })
 
 server.listen(3000, () => console.log("servidor rodando!"))
