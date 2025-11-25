@@ -66,7 +66,6 @@ Products.sync({force: false});
 //=================================
 
 
-
 server.get("/", (req, res) => {
     res.send("API funcionando!")
 })
@@ -97,8 +96,8 @@ server.post("/create-checkout-session", async (req, res) => {
                 payment_method_types: ["card"],
                 mode: "payment",
                 line_items: lineItems,
-                success_url: 'https://nenet.vercel.app/success',
-                cancel_url: 'https://nenet.vercel.app/cancel'
+                success_url: https://nenet.vercel.app/success
+                cancel_url: https://nenet.vercel.app/cancel
             });
 
             res.json({ url: session.url })
